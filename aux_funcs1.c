@@ -1,4 +1,4 @@
-#include monty.h
+#include "monty.h"
 
 /**
  * _isnumber - checks if a string is composed of numbers
@@ -8,12 +8,14 @@
  */
 int _isnumber(char *s)
 {
-return (0);
+	if (!s)
+		return (0);
 
-if (*s == '-')
-s++;
+	if (*s == '-')
+		s++;
 
-for (; *s; s++)
-return (0);
-return (1);
+	for (; *s; s++)
+		if (!isdigit(*s))
+			return (0);
+	return (1);
 }
