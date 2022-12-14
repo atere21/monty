@@ -1,56 +1,125 @@
-#include <stdio.h>
-#include <string.h>
 #include "monty.h"
 
 /**
- * get_opcode - obtains the corresponding opcode and calls func
- * @opcode: string of opcode to be evaluated
- *
- * Return: O on success, or possible exit if
- * invalid instruction is given
+ * _sub - sub top of stack y second top stack
+ * @stack: pointer to lists for monty stack
+ * @line_number: number of line opcode occurs on
  */
-int get_opcode(char *opcode)
+void _sub(stack_t **stack, unsigned int line_number)
 {
-	int i;
-	instruction_t ops[] = {
-		{"push", _push},
-		{"pall", _pall},
-		{"pint", _pint},
-		{"pop", _pop},
-		{"swap", _swap},
-		{"add", _add},
-		{"nop", _nop},
-		{"sub", _sub},
-		{"div", _div},
-		{"mul", _mul},
-		{"mod", _mod},
-		{"pchar", _pchar},
-		{"pstr", _pstr},
-		{"rotl", _rotl},
-		{"rotr", _rotr},
-		{"stack", _stack},
-		{"queue", _queue},
-		{NULL, NULL}
-	};
+	stack_t *tmp = *stack;
+	int sub = 0, i = 0;
 
-	for (i = 0; ops[i].opcode && opcode; i++)
-		if (!strcmp(opcode, ops[i].opcode))
-		{
+	if (tmp == NULL)
+	{
+		fprintf(stderr, "L%d: can't sub, stack too short\n", line_number);
+		exit(EXIT_FAILURE);
+	}
 
-			ops[i].f(&(globm.head), globm.line_number);
-			return (0);
-		}
+	while (tmp)
+	{
+		tmp = tmp->next;
+		i++;
+	}
 
-	dprintf(2, "L%d: unknown instruction %s\n",
-		globm.line_number, opcode);
-	exit(EXIT_FAILURE);
+	if (stack == NULL || (*stack)->next == NULL || i <= 1)
+	{
+		fprintf(stderr, "L%d: can't sub, stack too short\n", line_number);
+		exit(EXIT_FAILURE);
+	}
+	sub = (*stack)->next->n - (*stack)->n;
+	_pop(stack, line_number);
+
+	(*stack)->n = sub;
 }
+
 /**
- * exit_op - performs exit operations (free/close)
- * Return: No Return
+ * _mul - mul top of stack y second top stack
+ * @stack: pointer to lists for monty stack
+ * @line_number: number of line opcode occurs on
  */
-void exit_op(void)
+void _mul(stack_t **stack, unsigned int line_number)
 {
-	free(globm.gbuff), fclose(globm.fp);
-	free_stack_t(globm.head);
+	int aux;
+
+	if (*stack == NULL || (*stack)->next == NULL)
+	{
+		fprintf(stderr, "L%d: can't mul, stack too short\n", line_number);
+		free(var_global.buffer);
+		fclose(var_global.file);
+		free_dlistint(*stack);
+		exit(EXIT_FAILURE);
+	}
+	else
+	{
+		aux = (*stack)->n;
+		_pop(stack, line_number);
+		(*stack)->n *= aux;
+	}
+}
+
+/**
+ * _div - div top of stack y second top stack
+ * @stack: pointer to lists for monty stack
+ * @line_number: number of line opcode occurs on
+ */
+void _div(stack_t **stack, unsigned int line_number)
+{
+	int div = 0;
+
+	if (*stack == NULL || (*stack)->next == NULL)
+	{
+		fprintf(stderr, "L%u: can't div, stack too short\n", line_number);
+		free(var_global.buffer);
+		fclose(var_global.file);
+		free_dlistint(*stack);
+		exit(EXIT_FAILURE);
+	}
+	else if ((*stack)->n == 0)
+	{
+		fprintf(stderr, "L%d: division by zero\n", line_number);
+		free(var_global.buffer);
+		fclose(var_global.file);
+		free_dlistint(*stack);
+		exit(EXIT_FAILURE);
+	}
+	else
+	{
+		div = (*stack)->n;
+		_pop(stack, line_number);
+		(*stack)->n /= div;
+	}
+}
+
+/**
+ * _mod - mod top of stack y second top stack
+ * @stack: pointer to lists for monty stack
+ * @line_number: number of line opcode occurs on
+ */
+void _mod(stack_t **stack, unsigned int line_number)
+{
+	int mod = 0;
+
+	if (*stack == NULL || (*stack)->next == NULL)
+	{
+		fprintf(stderr, "L%u: can't mod, stack too short\n", line_number);
+		free(var_global.buffer);
+		fclose(var_global.file);
+		free_dlistint(*stack);
+		exit(EXIT_FAILURE);
+	}
+	else if ((*stack)->n == 0)
+	{
+		fprintf(stderr, "L%d: division by zero\n", line_number);
+		free(var_global.buffer);
+		fclose(var_global.file);
+		free_dlistint(*stack);
+		exit(EXIT_FAILURE);
+	}
+	else
+	{
+		mod = (*stack)->n;
+		_pop(stack, line_number);
+		(*stack)->n %= mod;
+	}
 }
