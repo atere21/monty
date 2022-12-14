@@ -1,30 +1,8 @@
-# Read First Number
-# 0
-,
->
-# Read Second Number
-# 1
-,
-# Add two Numbers
-<
-[
->+
-<-
-]
-# 1 Sum in ASCII
-# Multiplication to get 48
-# 0 : 8
-++++ ++++
-[
-# 3 : 6
->>++++ ++
-<<-
-]
-# 3 : 48
->>
-#Substraction to get actual number (ASCII - 48)
-[
-<-
->-
-]
-<-.
+read num (ascii - 48) into block #1
+>,-----------------------------------------------
+read num (ascii - 48 ('0')) into block #2
+>,-----------------------------------------------
+[<<+>>-] add block #2 to block #0
+<[<+>-] add block #1 to block #0
+<++++++++++++++++++++++++++++++++++++++++++++++++
+. print contents of block #0
