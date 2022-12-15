@@ -8,7 +8,7 @@
 *
 * Return: nothing
 */
-void f_pchar(stack_t **head, unsigned int counter)
+void f_pchar(free_stack **head, unsigned int counter)
 {
 	stack_t *h;
 
